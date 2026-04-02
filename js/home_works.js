@@ -21,17 +21,63 @@ const parentBlock = document.querySelector(".parent_block")
 const childBlock = document.querySelector(".child_block")
 
 
-let currenLeft = 0 
+let currentTop = 0    
+let currentLeft = 0
 
 const parentWidth = parentBlock.clientWidth
 const childWidth = childBlock.clientWidth
 const maxWidth = parentWidth - childWidth 
+let maxHeight = parentBlock.clientHeight - childBlock.clientHeight
 
-function moveRight () {
-    childBlock.style.left = `${currenLeft}px`
-    if(currenLeft < maxWidth) {
-        currenLeft++
-        requestAnimationFrame(moveRight)
+
+function move() {
+    childBlock.style.left = `${currentLeft}px`;
+    childBlock.style.top = `${currentTop}px`;
+
+    if (currentLeft < maxWidth && currentTop === 0) {
+        currentLeft++;
+    } 
+    else if (currentLeft >= maxWidth && currentTop < maxHeight) {
+        currentTop++;
+    } 
+    else if (currentTop >= maxHeight && currentLeft > 0) {
+        currentLeft--;
+    } 
+    else if (currentLeft <= 0 && currentTop > 0) {
+        currentTop--;
     }
+
+   
+
+    requestAnimationFrame(move);
 }
-moveRight()
+
+move();
+
+const startBtn = document.querySelector("#start")
+const stopBtn = document.querySelector("#stop")
+const resetBtn = document.querySelector("#reset")
+const timerDisplay = document.querySelector("#seconds")
+
+let seconds = 0
+let timerInterval = null
+
+startBtn.addEventListener("click", () => {
+    if (!timerInterval) {
+        timerInterval = setInterval(() => {
+            seconds++
+            timerDisplay.innerText = seconds
+        }, 800)
+    }
+})    
+ 
+stopBtn.addEventListener("click", () => {
+    clearInterval(timerInterval)
+        timerInterval = null
+
+})
+resetBtn.addEventListener("click", () => {
+    clearInterval(timerInterval)
+    timerDisplay.innerText = seconds
+    timerInterval = null
+})
