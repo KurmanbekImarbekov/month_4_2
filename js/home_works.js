@@ -81,3 +81,4 @@ resetBtn.addEventListener("click", () => {
     timerDisplay.innerText = seconds
     timerInterval = null
 })
+ 
