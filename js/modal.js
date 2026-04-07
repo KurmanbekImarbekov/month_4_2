@@ -22,7 +22,7 @@ modal.addEventListener('click', (event) => {
     }})
 
 
-setTimeout(showModal, 10000)
+// setTimeout(showModal, 10000)
 
 function onScroll() {
     if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
