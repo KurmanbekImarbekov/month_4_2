@@ -31,37 +31,37 @@ setInterval(() => {
 
 
 const charactersContainer = document.querySelector('#characters-container');
-const request = new XMLHttpRequest();
-request.open("GET", "../data/characters.json");
-request.setRequestHeader("Content-Type", "application/json");
-request.send();
+// const request = new XMLHttpRequest();
+// request.open("GET", "../data/characters.json");
+// request.setRequestHeader("Content-Type", "application/json");
+// request.send();
 
-request.addEventListener("load", () => {
-    const characters = JSON.parse(request.responseText);
-    characters.forEach(character => {
-        const characterElement = document.createElement('div');
-        characterElement.classList.add('character-card');
-        characterElement.innerHTML = `
-            <img src="${character.person_photo}" alt="${character.name}">
-            <h4>${character.name}</h4>
-            <p>${character.description}</p>
-        `;
-        charactersContainer.appendChild(characterElement);
-    });
-});
+// request.addEventListener("load", () => {
+//     const characters = JSON.parse(request.responseText);
+//     characters.forEach(character => {
+//         const characterElement = document.createElement('div');
+//         characterElement.classList.add('character-card');
+//         characterElement.innerHTML = `
+//             <img src="${character.person_photo}" alt="${character.name}">
+//             <h4>${character.name}</h4>
+//             <p>${character.description}</p>
+//         `;
+//         charactersContainer.appendChild(characterElement);
+//     });
+// });
 
 
-const request2 = new XMLHttpRequest();
+// const request2 = new XMLHttpRequest();
 
-request2.open('GET', '../data/bio.json');
+// request2.open('GET', '../data/bio.json');
 
-request2.send();
+// request2.send();
 
-request2.addEventListener('load', () => {
-  const data = JSON.parse(request2.responseText);
+// request2.addEventListener('load', () => {
+//   const data = JSON.parse(request2.responseText);
 
-  console.log(data);
-});
+//   console.log(data);
+// });
 
 // const request2 = new XMLHttpRequest();
 
@@ -155,3 +155,55 @@ converterRequest.send();
 converterRequest.addEventListener('load', () => {
     rates = JSON.parse(converterRequest.responseText);
 });
+
+
+
+const buttonPrev = document.querySelector('#btn-prev');
+const buttonNext = document.querySelector('#btn-next');
+const card = document.querySelector('.card');
+
+const MIN_CARD_ID = 1;
+const MAX_CARD_ID = 200;
+let currentCardId = MIN_CARD_ID;
+
+const renderCard = ({ id, title, completed }) => {
+    card.innerHTML = `
+        <p>ID: ${id}</p>
+        <p>${title}</p>
+        <p>${completed}</p>
+    `;
+};
+
+const loadCard = (id) => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
+        .then((response) => response.json())
+        .then(renderCard);
+};
+
+const getNextCardId = () => (currentCardId === MAX_CARD_ID ? MIN_CARD_ID : currentCardId + 1);
+const getPrevCardId = () => (currentCardId === MIN_CARD_ID ? MAX_CARD_ID : currentCardId - 1);
+
+buttonNext.addEventListener('click', () => {
+    currentCardId = getNextCardId();
+    loadCard(currentCardId);
+});
+
+buttonPrev.addEventListener('click', () => {
+    currentCardId = getPrevCardId();
+    loadCard(currentCardId);
+});
+
+loadCard(currentCardId);
+
+
+const loadAlbums = () => {
+    fetch('https://jsonplaceholder.typicode.com/albums')
+        .then((response) => response.json())
+        .then((albums) => {
+            albums.forEach(({ id, title }) => {
+                console.log(`ID: ${id}, title: ${title}`);
+            });
+        });
+};
+
+loadAlbums();
