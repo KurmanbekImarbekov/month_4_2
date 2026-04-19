@@ -31,24 +31,27 @@ setInterval(() => {
 
 
 const charactersContainer = document.querySelector('#characters-container');
-// const request = new XMLHttpRequest();
-// request.open("GET", "../data/characters.json");
-// request.setRequestHeader("Content-Type", "application/json");
-// request.send();
 
-// request.addEventListener("load", () => {
-//     const characters = JSON.parse(request.responseText);
-//     characters.forEach(character => {
-//         const characterElement = document.createElement('div');
-//         characterElement.classList.add('character-card');
-//         characterElement.innerHTML = `
-//             <img src="${character.person_photo}" alt="${character.name}">
-//             <h4>${character.name}</h4>
-//             <p>${character.description}</p>
-//         `;
-//         charactersContainer.appendChild(characterElement);
-//     });
-// });
+const loadCharacters = async () => {
+    try {
+        const response = await fetch('../data/characters.json');
+        const characters = await response.json();
+        characters.forEach(character => {
+            const characterElement = document.createElement('div');
+            characterElement.classList.add('character-card');
+            characterElement.innerHTML = `
+                <img src="${character.person_photo}" alt="${character.name}">
+                <h4>${character.name}</h4>
+                <p>${character.description}</p>
+            `;
+            charactersContainer.appendChild(characterElement);
+        });
+    } catch (error) {
+        console.error('Error loading characters:', error);
+    }
+};
+
+loadCharacters();
 
 
 // const request2 = new XMLHttpRequest();
@@ -63,31 +66,28 @@ const charactersContainer = document.querySelector('#characters-container');
 //   console.log(data);
 // });
 
-// const request2 = new XMLHttpRequest();
+const loadBioDetailed = async () => {
+    try {
+        const response = await fetch('../data/bio.json');
+        if (!response.ok) {
+            throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log(`Имя: ${data.name}\nВозраст: ${data.age}\nШкола: ${data.school}`);
+        console.log(`Хобби: ${data.hobbies.join(', ')}`);
+        console.log(` ${data.name} (${data.age} лет) учится в школе ${data.school}`);
+    } catch (error) {
+        console.error('Error loading bio:', error);
+    }
+};
 
-// request2.open('GET', '../data/bio.json');
-// request2.send();
-
-// request2.addEventListener('load', () => {
-//     if (request2.status == 200) {
-//     } else {
-//         console.error(`Ошибка ${request2.status}: ${request2.statusText}`);
-//         return;
-//     }
-//   const data = JSON.parse(request2.responseText);
-//   console.log(`Имя: ${data.name }\nВозраст: ${data.age}\nШкола: ${data.school}`);
-//   console.log(`Хобби: ${data.hobbies.join(', ')}`);
-//   console.log(` ${data.name } (${data.age} лет) учится в школе ${data.school}`);
- 
-  
-// });
+loadBioDetailed();
 
 
 const somInput = document.querySelector('#som');
 const usdInput = document.querySelector('#usd');
 const eurInput = document.querySelector('#eur');
 
-const converterRequest = new XMLHttpRequest();
 let rates = null;
 let isUpdatingInputs = false;
 
@@ -148,13 +148,16 @@ somInput.addEventListener('input', () => handleConverterInput(somInput));
 usdInput.addEventListener('input', () => handleConverterInput(usdInput));
 eurInput.addEventListener('input', () => handleConverterInput(eurInput));
 
-converterRequest.open('GET', '../data/converter.json');
-converterRequest.setRequestHeader('Content-Type', 'application/json');
-converterRequest.send();
+const loadRates = async () => {
+    try {
+        const response = await fetch('../data/converter.json');
+        rates = await response.json();
+    } catch (error) {
+        console.error('Error loading rates:', error);
+    }
+};
 
-converterRequest.addEventListener('load', () => {
-    rates = JSON.parse(converterRequest.responseText);
-});
+loadRates();
 
 
 
@@ -174,10 +177,14 @@ const renderCard = ({ id, title, completed }) => {
     `;
 };
 
-const loadCard = (id) => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
-        .then((response) => response.json())
-        .then(renderCard);
+const loadCard = async (id) => {
+    try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`);
+        const data = await response.json();
+        renderCard(data);
+    } catch (error) {
+        console.error('Error loading card:', error);
+    }
 };
 
 const getNextCardId = () => (currentCardId === MAX_CARD_ID ? MIN_CARD_ID : currentCardId + 1);
@@ -196,14 +203,18 @@ buttonPrev.addEventListener('click', () => {
 loadCard(currentCardId);
 
 
-const loadAlbums = () => {
-    fetch('https://jsonplaceholder.typicode.com/albums')
-        .then((response) => response.json())
-        .then((albums) => {
-            albums.forEach(({ id, title }) => {
-                console.log(`ID: ${id}, title: ${title}`);
-            });
+const loadAlbums = async () => {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/albums');
+        const albums = await response.json();
+        albums.forEach(({ id, title }) => {
+            console.log(`ID: ${id}, title: ${title}`);
         });
+    } catch (error) {
+        console.error('Error loading albums:', error);
+    }
 };
-
+ 
 loadAlbums();
+
+
